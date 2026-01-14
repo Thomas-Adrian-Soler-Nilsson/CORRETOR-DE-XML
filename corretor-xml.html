@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <title>Corretor de XML (Mercado Livre)</title>
+  <title>Corretor de XML (Para o Mercado Livre)</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
     .box { border: 1px solid #ddd; padding: 16px; border-radius: 10px; }
@@ -11,7 +11,7 @@
   </style>
 </head>
 <body>
-  <h2>Corretor de XML (cabeçalho + UTF-8)</h2>
+  <h2>Corretor de versão de XML (cabeçalho + UTF-8)</h2>
 
   <div class="box">
     <input id="file" type="file" accept=".xml,text/xml" />
@@ -34,15 +34,11 @@
     });
 
     function fixXml(text) {
-      // Remove BOM + espaços antes de começar
       text = text.replace(/^\uFEFF/, "");
-      // Corta tudo antes do primeiro "<"
       const firstLt = text.indexOf("<");
       if (firstLt > 0) text = text.slice(firstLt);
 
-      // Remove cabeçalho existente se houver
       text = text.replace(/^\s*<\?xml[^?]*\?>\s*/i, "");
-      // Adiciona cabeçalho padrão
       return HEADER + "\n" + text.trimStart();
     }
 
