@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <title>Corretor de XML (Mercado Livre)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+    .box { border: 1px solid #ddd; padding: 16px; border-radius: 10px; }
+    button { padding: 10px 14px; cursor: pointer; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h2>Corretor de XML (cabeçalho + UTF-8)</h2>
+
+  <div class="box">
+    <input id="file" type="file" accept=".xml,text/xml" />
+    <div style="height:12px"></div>
+    <button id="btn" disabled>Corrigir e baixar</button>
+    <div style="height:12px"></div>
+    <small>
+      Ele só mexe no começo do arquivo: remove lixo antes do XML e garante o cabeçalho
+      <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code>.
+    </small>
+  </div>
+
+  <script>
+    const HEADER = `<?xml version="1.0" encoding="UTF-8"?>`;
+    const fileInput = document.getElementById("file");
+    const btn = document.getElementById("btn");
+
+    fileInput.addEventListener("change", () => {
+      btn.disabled = !fileInput.files?.length;
+    });
+
+    function fixXml(text) {
+      // Remove BOM + espaços antes de começar
+      text = text.replace(/^\uFEFF/, "");
+      // Corta tudo antes do primeiro "<"
+      const firstLt = text.indexOf("<");
+      if (firstLt > 0) text = text.slice(firstLt);
+
+      // Remove cabeçalho existente se houver
+      text = text.replace(/^\s*<\?xml[^?]*\?>\s*/i, "");
+      // Adiciona cabeçalho padrão
+      return HEADER + "\n" + text.trimStart();
+    }
+
+    btn.addEventListener("click", async () => {
+      const f = fileInput.files[0];
+      const text = await f.text();
+      const fixed = fixXml(text);
+
+      const blob = new Blob([fixed], { type: "text/xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      const baseName = f.name.replace(/\.xml$/i, "");
+      a.download = `${baseName}_corrigido.xml`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
