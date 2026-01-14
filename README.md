@@ -13,3 +13,6 @@ Resolve erros como:
 - Garante que a **primeira linha do arquivo** seja exatamente:
   ```xml
   <?xml version="1.0" encoding="UTF-8"?>
+---
+Site:
+<a>https://corretor-de-xml-qb6c.vercel.app/<a>
